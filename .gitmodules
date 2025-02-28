@@ -1,0 +1,6 @@
+[submodule "cosmo-stub-generator-ABI"]
+	path = cosmo-stub-generator-ABI
+	url = https://github.com/JayBernstein/cosmo-stub-generator-ABI.git
+[submodule "deps/libusb"]
+	path = deps/libusb
+	url = https://github.com/libusb/libusb.git

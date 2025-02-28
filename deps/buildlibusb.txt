@@ -1,0 +1,11 @@
+# requires package libudev-dev, silently fails otherwise
+./autogen
+make clean
+HEREPATH=$PWD
+./configure  "CC=x86_64-w64-mingw32-gcc" --host=x86_64-w64-mingw32 --prefix=$HEREPATH/../libusb_install --enable-udev --enable-examples-build --verbose
+make
+
+
+make clean 
+./configure "CC=gcc" --prefix=$HEREPATH/libusb_install --libdir=$HEREPATH/../objects --enable-udev --enable-examples-build --verbose
+make
