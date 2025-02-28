@@ -4,3 +4,6 @@
 [submodule "deps/libusb"]
 	path = deps/libusb
 	url = https://github.com/libusb/libusb.git
+[submodule "deps/cosmo-stub-generator-ABI"]
+	path = deps/cosmo-stub-generator-ABI
+	url = https://github.com/JayBernstein/cosmo-stub-generator-ABI.git

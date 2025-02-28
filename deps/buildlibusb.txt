@@ -1,11 +1,26 @@
 # requires package libudev-dev, silently fails otherwise
-./autogen
+./autogen.sh
+
+cp libusb/libusb.h ..
+
 make clean
 HEREPATH=$PWD
-./configure  "CC=x86_64-w64-mingw32-gcc" --host=x86_64-w64-mingw32 --prefix=$HEREPATH/../libusb_install --enable-udev --enable-examples-build --verbose
-make
-
+./configure  "CC=x86_64-w64-mingw32-gcc" --host=x86_64-w64-mingw32 --prefix=$HEREPATH/libusb_install --enable-udev --enable-examples-build --verbose
+make -j6
+mkdir ../win_build || true
+mkdir ../win_build/objects || true
+mkdir ../win_build/examples || true
+cp libusb/.libs/* ../win_build/objects
+cp examples/.libs/* ../win_build/examples
+cp ../win_build/objects/*.dll ..
 
 make clean 
-./configure "CC=gcc" --prefix=$HEREPATH/libusb_install --libdir=$HEREPATH/../objects --enable-udev --enable-examples-build --verbose
-make
+./configure "CC=gcc" --prefix=$HEREPATH/libusb_install --enable-udev --enable-examples-build --verbose
+make -j6
+mkdir ../linux_build || true
+mkdir ../linux_build/objects || true
+mkdir ../linux_build/examples || true
+cp libusb/.libs/* ../linux_build/objects
+cp examples/.libs/* ../linux_build/examples
+cp ../linux_build/objects/*.so ..
+

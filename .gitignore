@@ -41,5 +41,5 @@ CMakeCache.txt
 */CMakeFiles
 CMakeFiles
 *.cmake
-deps/win_build/examples
-deps/linux_build/examples
+deps/win_build/
+deps/linux_build/
