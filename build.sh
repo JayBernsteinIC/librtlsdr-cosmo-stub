@@ -29,6 +29,9 @@ read -p "Do you want to rebuild the stubs? (y/n): " response; if [ "$response" =
 	./build_libusb_stubs.sh
 	cd ..
 	
+
+fi
+
 	# 1) Compile stubs to object files (no linking yet, so no -lusb-1.0 needed here)
 	# cosmocc -g -ggdb -mcosmo -Wall -Werror -c stub/stub.c        -o .build/stub.o
 	cosmocc $FLAGS -c deps/stub.c        -o .build/stub.o
@@ -42,11 +45,6 @@ read -p "Do you want to rebuild the stubs? (y/n): " response; if [ "$response" =
 	cosmocc $FLAGS -I include -c src/tuner_fc0013.c -o .build/tuner_fc0013.o
 	cosmocc $FLAGS -I include -c src/tuner_fc2580.c -o .build/tuner_fc2580.o
 	cosmocc $FLAGS -I include -c src/tuner_r82xx.c -o .build/tuner_r82xx.o
-fi
-
-
-
-
 
 objects=$(find .build -name '*.o' -not -path '*.aarch64/*')
 # 2) Link the final binary with the stubs (now we add -lusb-1.0 if on Linux)

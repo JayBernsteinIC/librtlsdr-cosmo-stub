@@ -124,7 +124,7 @@ int main()
 		const char dst_file[] = "./libusb-1.0.so";
 
 		if (access( src_file, F_OK) == 0) {
-        fprintf(stderr, "zipped libusb dll FOUND and can be used as an asset\n");
+        fprintf(stderr, "zipped libusb shared object FOUND and can be used as an asset\n");
 	}
 
 		if (access("dst_file", F_OK) == 0) { /* File exists */ }
@@ -132,11 +132,11 @@ int main()
 
 		int result = testlib_extract(src_file, dst_file, mode);
 		if (result == 0) {
-			printf("dll successfuly unzipped!\n");
+			printf("shared object successfuly unzipped!\n");
 		}
 		else if(result == -2);
 		else {
-			printf("dll not unzipped. Manually extract it from the archive (open the .exe with an unzipping tool)\n");
+			printf("shared object not unzipped. Manually extract it from the archive (open the executable with an unzipping tool)\n");
 		}
 	}
     initialize_libusb();
@@ -163,13 +163,15 @@ int main()
 	libusb_free_device_list(devs, 1);
 
 	libusb_exit(NULL);
-	
-	if (rtlsdr_get_device_count()){
-		char* manufact = {0};
-		char* product = {0};
-		char* serial = {0};
-		rtlsdr_get_device_usb_strings(0,manufact, product, serial);
-		printf("Manufacturer : %s\r\n, product : %s\r\n, serial : %s\r\n",manufact, product, serial);
+	int32_t number_of_sdr = rtlsdr_get_device_count();
+	if (number_of_sdr){
+		char manufact[256] = {0};
+		char product[256] = {0};
+		char serial[256] = {0};
+		for (int32_t a = 0;a<number_of_sdr;a++){
+			rtlsdr_get_device_usb_strings(a,manufact, product, serial);
+			printf("Index %d\r\nManufacturer : %s\r\nproduct : %s\r\nserial : %s\r\n",a,manufact, product, serial);
+		}
 		
 	}
 	else

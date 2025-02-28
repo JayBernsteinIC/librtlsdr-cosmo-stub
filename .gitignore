@@ -43,3 +43,4 @@ CMakeFiles
 *.cmake
 deps/win_build/
 deps/linux_build/
+bin/
