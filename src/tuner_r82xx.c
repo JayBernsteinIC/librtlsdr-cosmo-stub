@@ -452,7 +452,7 @@ static inline uint8_t mask_reg8(uint8_t reg, uint8_t val, uint8_t mask)
 static int r82xx_set_pll(struct r82xx_priv *priv, uint32_t freq)
 {
 	int rc, i;
-	unsigned sleep_time = 10000;
+	// unsigned sleep_time = 10000;
 	uint64_t vco_freq;
 	uint64_t vco_div;
 	uint32_t vco_min = 1770000; /* kHz */

@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.c": "c",
+        "libusb_stub.h": "c",
+        "tuner_e4k.h": "c"
+    }
+}
