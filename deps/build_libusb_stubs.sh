@@ -35,7 +35,6 @@ cp localcopy/libusb_spec.* cosmo-stub-generator-ABI/specs/
 cp localcopy/libclangs_fixed_CMakeLists.txt  cosmo-stub-generator-ABI/libclang-lua/CMakeLists.txt
 cp libusb.h cosmo-stub-generator-ABI/specs/
 
-
 luarocks-5.4 install luafilesystem --local
 cd cosmo-stub-generator-ABI/libclang-lua/
 

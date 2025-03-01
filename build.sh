@@ -1,7 +1,8 @@
 #!/bin/sh -e
 # sudo sh -c 'echo -1 > /proc/sys/fs/binfmt_misc/WSLInterop'
-sed -i 's/\r//' build.sh #git is annoying, you need to destroy carriage returns to make this shell script parse correctly in unix
-sed -i 's/\r//' deps/build_libusb_stubs.sh #git is annoying, you need to destroy carriage returns to make this shell script parse correctly in unix
+# IF YOU JUST PULLED THIS REPO AND ARE GETTING ERRORS RUNNING THIS, USE THESE TWO COMMANDS
+#~ sed -i 's/\r//' build.sh #git is annoying, you need to destroy carriage returns to make this shell script parse correctly in unix
+#~ sed -i 's/\r//' deps/build_libusb_stubs.sh #git is annoying, you need to destroy carriage returns to make this shell script parse correctly in unix
 
 BASE_DIR=$PWD
 
@@ -23,7 +24,6 @@ FLAGS="-g -ggdb -mcosmo -mdbg -Wall -I /deps/libusb.h "
 LINUX_FLAGS="-lusb-1.0"
 
 echo $BASE_DIR
-
 
 read -p "Do you want to rebuild the stubs? (y/n): " response; if [ "$response" = "y" ]; then
 	cd deps
