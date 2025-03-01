@@ -1,5 +1,7 @@
 #!/bin/sh -e
 # sudo sh -c 'echo -1 > /proc/sys/fs/binfmt_misc/WSLInterop'
+sed -i 's/\r//' build.sh #git is annoying, you need to destroy carriage returns to make this shell script parse correctly in unix
+
 BASE_DIR=$PWD
 
 
