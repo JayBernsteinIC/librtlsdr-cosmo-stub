@@ -46,3 +46,5 @@ deps/linux_build/
 bin/
 .build
 .vscode
+deps/cosmo-stub-generator-ABI/libclang-lua/build/
+
