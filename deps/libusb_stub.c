@@ -8,13 +8,12 @@
 
 static struct libusbFuncs {
     int (*ptr_libusb_init)(libusb_context * * ctx);
-    int (*ptr_libusb_init_context)(libusb_context * * ctx, const struct libusb_init_option options[], int num_options);
     void (*ptr_libusb_exit)(libusb_context * ctx);
     void (*ptr_libusb_set_debug)(libusb_context * ctx, int level);
     void (*ptr_libusb_set_log_cb)(libusb_context * ctx, libusb_log_cb cb, int mode);
     const struct libusb_version * (*ptr_libusb_get_version)(void);
     int (*ptr_libusb_has_capability)(uint32_t capability);
-    const char * (*ptr_libusb_error_name)(int error_code);
+    const char * (*ptr_libusb_error_name)(int errcode);
     int (*ptr_libusb_setlocale)(const char * locale);
     const char * (*ptr_libusb_strerror)(int errcode);
     ssize_t (*ptr_libusb_get_device_list)(libusb_context * ctx, libusb_device * * * list);
@@ -35,12 +34,8 @@ static struct libusbFuncs {
     void (*ptr_libusb_free_usb_2_0_extension_descriptor)(struct libusb_usb_2_0_extension_descriptor * usb_2_0_extension);
     int (*ptr_libusb_get_ss_usb_device_capability_descriptor)(libusb_context * ctx, struct libusb_bos_dev_capability_descriptor * dev_cap, struct libusb_ss_usb_device_capability_descriptor * * ss_usb_device_cap);
     void (*ptr_libusb_free_ss_usb_device_capability_descriptor)(struct libusb_ss_usb_device_capability_descriptor * ss_usb_device_cap);
-    int (*ptr_libusb_get_ssplus_usb_device_capability_descriptor)(libusb_context * ctx, struct libusb_bos_dev_capability_descriptor * dev_cap, struct libusb_ssplus_usb_device_capability_descriptor * * ssplus_usb_device_cap);
-    void (*ptr_libusb_free_ssplus_usb_device_capability_descriptor)(struct libusb_ssplus_usb_device_capability_descriptor * ssplus_usb_device_cap);
     int (*ptr_libusb_get_container_id_descriptor)(libusb_context * ctx, struct libusb_bos_dev_capability_descriptor * dev_cap, struct libusb_container_id_descriptor * * container_id);
     void (*ptr_libusb_free_container_id_descriptor)(struct libusb_container_id_descriptor * container_id);
-    int (*ptr_libusb_get_platform_descriptor)(libusb_context * ctx, struct libusb_bos_dev_capability_descriptor * dev_cap, struct libusb_platform_descriptor * * platform_descriptor);
-    void (*ptr_libusb_free_platform_descriptor)(struct libusb_platform_descriptor * platform_descriptor);
     uint8_t (*ptr_libusb_get_bus_number)(libusb_device * dev);
     uint8_t (*ptr_libusb_get_port_number)(libusb_device * dev);
     int (*ptr_libusb_get_port_numbers)(libusb_device * dev, uint8_t * port_numbers, int port_numbers_len);
@@ -50,10 +45,6 @@ static struct libusbFuncs {
     int (*ptr_libusb_get_device_speed)(libusb_device * dev);
     int (*ptr_libusb_get_max_packet_size)(libusb_device * dev, unsigned char endpoint);
     int (*ptr_libusb_get_max_iso_packet_size)(libusb_device * dev, unsigned char endpoint);
-    int (*ptr_libusb_get_max_alt_packet_size)(libusb_device * dev, int interface_number, int alternate_setting, unsigned char endpoint);
-    int (*ptr_libusb_get_interface_association_descriptors)(libusb_device * dev, uint8_t config_index, struct libusb_interface_association_descriptor_array * * iad_array);
-    int (*ptr_libusb_get_active_interface_association_descriptors)(libusb_device * dev, struct libusb_interface_association_descriptor_array * * iad_array);
-    void (*ptr_libusb_free_interface_association_descriptors)(struct libusb_interface_association_descriptor_array * iad_array);
     int (*ptr_libusb_wrap_sys_device)(libusb_context * ctx, intptr_t sys_dev, libusb_device_handle * * dev_handle);
     int (*ptr_libusb_open)(libusb_device * dev, libusb_device_handle * * dev_handle);
     void (*ptr_libusb_close)(libusb_device_handle * dev_handle);
@@ -79,9 +70,9 @@ static struct libusbFuncs {
     void (*ptr_libusb_free_transfer)(struct libusb_transfer * transfer);
     void (*ptr_libusb_transfer_set_stream_id)(struct libusb_transfer * transfer, uint32_t stream_id);
     uint32_t (*ptr_libusb_transfer_get_stream_id)(struct libusb_transfer * transfer);
-    int (*ptr_libusb_control_transfer)(libusb_device_handle * dev_handle, uint8_t bmRequestType, uint8_t bRequest, uint16_t wValue, uint16_t wIndex, unsigned char * data, uint16_t wLength, unsigned int timeout);
-    int (*ptr_libusb_bulk_transfer)(libusb_device_handle * dev_handle, unsigned char endpoint, unsigned char * data, int length, int * transferred, unsigned int timeout);
-    int (*ptr_libusb_interrupt_transfer)(libusb_device_handle * dev_handle, unsigned char endpoint, unsigned char * data, int length, int * transferred, unsigned int timeout);
+    int (*ptr_libusb_control_transfer)(libusb_device_handle * dev_handle, uint8_t request_type, uint8_t bRequest, uint16_t wValue, uint16_t wIndex, unsigned char * data, uint16_t wLength, unsigned int timeout);
+    int (*ptr_libusb_bulk_transfer)(libusb_device_handle * dev_handle, unsigned char endpoint, unsigned char * data, int length, int * actual_length, unsigned int timeout);
+    int (*ptr_libusb_interrupt_transfer)(libusb_device_handle * dev_handle, unsigned char endpoint, unsigned char * data, int length, int * actual_length, unsigned int timeout);
     int (*ptr_libusb_get_string_descriptor_ascii)(libusb_device_handle * dev_handle, uint8_t desc_index, unsigned char * data, int length);
     int (*ptr_libusb_try_lock_events)(libusb_context * ctx);
     void (*ptr_libusb_lock_events)(libusb_context * ctx);
@@ -106,13 +97,12 @@ static struct libusbFuncs {
     void (*ptr_libusb_hotplug_deregister_callback)(libusb_context * ctx, libusb_hotplug_callback_handle callback_handle);
     void * (*ptr_libusb_hotplug_get_user_data)(libusb_context * ctx, libusb_hotplug_callback_handle callback_handle);
     int (__attribute__((__ms_abi__)) *ptr_ms_libusb_init)(libusb_context * * ctx);
-    int (__attribute__((__ms_abi__)) *ptr_ms_libusb_init_context)(libusb_context * * ctx, const struct libusb_init_option options[], int num_options);
     void (__attribute__((__ms_abi__)) *ptr_ms_libusb_exit)(libusb_context * ctx);
     void (__attribute__((__ms_abi__)) *ptr_ms_libusb_set_debug)(libusb_context * ctx, int level);
     void (__attribute__((__ms_abi__)) *ptr_ms_libusb_set_log_cb)(libusb_context * ctx, libusb_log_cb cb, int mode);
     const struct libusb_version * (__attribute__((__ms_abi__)) *ptr_ms_libusb_get_version)(void);
     int (__attribute__((__ms_abi__)) *ptr_ms_libusb_has_capability)(uint32_t capability);
-    const char * (__attribute__((__ms_abi__)) *ptr_ms_libusb_error_name)(int error_code);
+    const char * (__attribute__((__ms_abi__)) *ptr_ms_libusb_error_name)(int errcode);
     int (__attribute__((__ms_abi__)) *ptr_ms_libusb_setlocale)(const char * locale);
     const char * (__attribute__((__ms_abi__)) *ptr_ms_libusb_strerror)(int errcode);
     ssize_t (__attribute__((__ms_abi__)) *ptr_ms_libusb_get_device_list)(libusb_context * ctx, libusb_device * * * list);
@@ -133,12 +123,8 @@ static struct libusbFuncs {
     void (__attribute__((__ms_abi__)) *ptr_ms_libusb_free_usb_2_0_extension_descriptor)(struct libusb_usb_2_0_extension_descriptor * usb_2_0_extension);
     int (__attribute__((__ms_abi__)) *ptr_ms_libusb_get_ss_usb_device_capability_descriptor)(libusb_context * ctx, struct libusb_bos_dev_capability_descriptor * dev_cap, struct libusb_ss_usb_device_capability_descriptor * * ss_usb_device_cap);
     void (__attribute__((__ms_abi__)) *ptr_ms_libusb_free_ss_usb_device_capability_descriptor)(struct libusb_ss_usb_device_capability_descriptor * ss_usb_device_cap);
-    int (__attribute__((__ms_abi__)) *ptr_ms_libusb_get_ssplus_usb_device_capability_descriptor)(libusb_context * ctx, struct libusb_bos_dev_capability_descriptor * dev_cap, struct libusb_ssplus_usb_device_capability_descriptor * * ssplus_usb_device_cap);
-    void (__attribute__((__ms_abi__)) *ptr_ms_libusb_free_ssplus_usb_device_capability_descriptor)(struct libusb_ssplus_usb_device_capability_descriptor * ssplus_usb_device_cap);
     int (__attribute__((__ms_abi__)) *ptr_ms_libusb_get_container_id_descriptor)(libusb_context * ctx, struct libusb_bos_dev_capability_descriptor * dev_cap, struct libusb_container_id_descriptor * * container_id);
     void (__attribute__((__ms_abi__)) *ptr_ms_libusb_free_container_id_descriptor)(struct libusb_container_id_descriptor * container_id);
-    int (__attribute__((__ms_abi__)) *ptr_ms_libusb_get_platform_descriptor)(libusb_context * ctx, struct libusb_bos_dev_capability_descriptor * dev_cap, struct libusb_platform_descriptor * * platform_descriptor);
-    void (__attribute__((__ms_abi__)) *ptr_ms_libusb_free_platform_descriptor)(struct libusb_platform_descriptor * platform_descriptor);
     uint8_t (__attribute__((__ms_abi__)) *ptr_ms_libusb_get_bus_number)(libusb_device * dev);
     uint8_t (__attribute__((__ms_abi__)) *ptr_ms_libusb_get_port_number)(libusb_device * dev);
     int (__attribute__((__ms_abi__)) *ptr_ms_libusb_get_port_numbers)(libusb_device * dev, uint8_t * port_numbers, int port_numbers_len);
@@ -148,10 +134,6 @@ static struct libusbFuncs {
     int (__attribute__((__ms_abi__)) *ptr_ms_libusb_get_device_speed)(libusb_device * dev);
     int (__attribute__((__ms_abi__)) *ptr_ms_libusb_get_max_packet_size)(libusb_device * dev, unsigned char endpoint);
     int (__attribute__((__ms_abi__)) *ptr_ms_libusb_get_max_iso_packet_size)(libusb_device * dev, unsigned char endpoint);
-    int (__attribute__((__ms_abi__)) *ptr_ms_libusb_get_max_alt_packet_size)(libusb_device * dev, int interface_number, int alternate_setting, unsigned char endpoint);
-    int (__attribute__((__ms_abi__)) *ptr_ms_libusb_get_interface_association_descriptors)(libusb_device * dev, uint8_t config_index, struct libusb_interface_association_descriptor_array * * iad_array);
-    int (__attribute__((__ms_abi__)) *ptr_ms_libusb_get_active_interface_association_descriptors)(libusb_device * dev, struct libusb_interface_association_descriptor_array * * iad_array);
-    void (__attribute__((__ms_abi__)) *ptr_ms_libusb_free_interface_association_descriptors)(struct libusb_interface_association_descriptor_array * iad_array);
     int (__attribute__((__ms_abi__)) *ptr_ms_libusb_wrap_sys_device)(libusb_context * ctx, intptr_t sys_dev, libusb_device_handle * * dev_handle);
     int (__attribute__((__ms_abi__)) *ptr_ms_libusb_open)(libusb_device * dev, libusb_device_handle * * dev_handle);
     void (__attribute__((__ms_abi__)) *ptr_ms_libusb_close)(libusb_device_handle * dev_handle);
@@ -177,9 +159,9 @@ static struct libusbFuncs {
     void (__attribute__((__ms_abi__)) *ptr_ms_libusb_free_transfer)(struct libusb_transfer * transfer);
     void (__attribute__((__ms_abi__)) *ptr_ms_libusb_transfer_set_stream_id)(struct libusb_transfer * transfer, uint32_t stream_id);
     uint32_t (__attribute__((__ms_abi__)) *ptr_ms_libusb_transfer_get_stream_id)(struct libusb_transfer * transfer);
-    int (__attribute__((__ms_abi__)) *ptr_ms_libusb_control_transfer)(libusb_device_handle * dev_handle, uint8_t bmRequestType, uint8_t bRequest, uint16_t wValue, uint16_t wIndex, unsigned char * data, uint16_t wLength, unsigned int timeout);
-    int (__attribute__((__ms_abi__)) *ptr_ms_libusb_bulk_transfer)(libusb_device_handle * dev_handle, unsigned char endpoint, unsigned char * data, int length, int * transferred, unsigned int timeout);
-    int (__attribute__((__ms_abi__)) *ptr_ms_libusb_interrupt_transfer)(libusb_device_handle * dev_handle, unsigned char endpoint, unsigned char * data, int length, int * transferred, unsigned int timeout);
+    int (__attribute__((__ms_abi__)) *ptr_ms_libusb_control_transfer)(libusb_device_handle * dev_handle, uint8_t request_type, uint8_t bRequest, uint16_t wValue, uint16_t wIndex, unsigned char * data, uint16_t wLength, unsigned int timeout);
+    int (__attribute__((__ms_abi__)) *ptr_ms_libusb_bulk_transfer)(libusb_device_handle * dev_handle, unsigned char endpoint, unsigned char * data, int length, int * actual_length, unsigned int timeout);
+    int (__attribute__((__ms_abi__)) *ptr_ms_libusb_interrupt_transfer)(libusb_device_handle * dev_handle, unsigned char endpoint, unsigned char * data, int length, int * actual_length, unsigned int timeout);
     int (__attribute__((__ms_abi__)) *ptr_ms_libusb_get_string_descriptor_ascii)(libusb_device_handle * dev_handle, uint8_t desc_index, unsigned char * data, int length);
     int (__attribute__((__ms_abi__)) *ptr_ms_libusb_try_lock_events)(libusb_context * ctx);
     void (__attribute__((__ms_abi__)) *ptr_ms_libusb_lock_events)(libusb_context * ctx);
@@ -208,8 +190,8 @@ static struct libusbFuncs {
 void *libusb;
 
 void initialize_libusb(void) {
-    char *candidates_libusb[] = { "libusb-1.0.so", "libusb-1.0.dll" };
-    libusb = try_find_lib(candidates_libusb, 2);
+    char *candidates_libusb[] = { "libusb-1.0.so", "libusb-1.0.dll", "libusb-1.0.so.0.3.0", "libusb-1.0.so.0" };
+    libusb = try_find_lib(candidates_libusb, 3);
 
     if (!libusb) {
         fprintf(stderr, "Unable to locate libusb, exiting!");
@@ -217,7 +199,6 @@ void initialize_libusb(void) {
     }
 
     stub_funcs.ptr_libusb_init = try_find_sym(libusb, "libusb_init");
-    stub_funcs.ptr_libusb_init_context = try_find_sym(libusb, "libusb_init_context");
     stub_funcs.ptr_libusb_exit = try_find_sym(libusb, "libusb_exit");
     stub_funcs.ptr_libusb_set_debug = try_find_sym(libusb, "libusb_set_debug");
     stub_funcs.ptr_libusb_set_log_cb = try_find_sym(libusb, "libusb_set_log_cb");
@@ -244,12 +225,8 @@ void initialize_libusb(void) {
     stub_funcs.ptr_libusb_free_usb_2_0_extension_descriptor = try_find_sym(libusb, "libusb_free_usb_2_0_extension_descriptor");
     stub_funcs.ptr_libusb_get_ss_usb_device_capability_descriptor = try_find_sym(libusb, "libusb_get_ss_usb_device_capability_descriptor");
     stub_funcs.ptr_libusb_free_ss_usb_device_capability_descriptor = try_find_sym(libusb, "libusb_free_ss_usb_device_capability_descriptor");
-    stub_funcs.ptr_libusb_get_ssplus_usb_device_capability_descriptor = try_find_sym(libusb, "libusb_get_ssplus_usb_device_capability_descriptor");
-    stub_funcs.ptr_libusb_free_ssplus_usb_device_capability_descriptor = try_find_sym(libusb, "libusb_free_ssplus_usb_device_capability_descriptor");
     stub_funcs.ptr_libusb_get_container_id_descriptor = try_find_sym(libusb, "libusb_get_container_id_descriptor");
     stub_funcs.ptr_libusb_free_container_id_descriptor = try_find_sym(libusb, "libusb_free_container_id_descriptor");
-    stub_funcs.ptr_libusb_get_platform_descriptor = try_find_sym(libusb, "libusb_get_platform_descriptor");
-    stub_funcs.ptr_libusb_free_platform_descriptor = try_find_sym(libusb, "libusb_free_platform_descriptor");
     stub_funcs.ptr_libusb_get_bus_number = try_find_sym(libusb, "libusb_get_bus_number");
     stub_funcs.ptr_libusb_get_port_number = try_find_sym(libusb, "libusb_get_port_number");
     stub_funcs.ptr_libusb_get_port_numbers = try_find_sym(libusb, "libusb_get_port_numbers");
@@ -259,10 +236,6 @@ void initialize_libusb(void) {
     stub_funcs.ptr_libusb_get_device_speed = try_find_sym(libusb, "libusb_get_device_speed");
     stub_funcs.ptr_libusb_get_max_packet_size = try_find_sym(libusb, "libusb_get_max_packet_size");
     stub_funcs.ptr_libusb_get_max_iso_packet_size = try_find_sym(libusb, "libusb_get_max_iso_packet_size");
-    stub_funcs.ptr_libusb_get_max_alt_packet_size = try_find_sym(libusb, "libusb_get_max_alt_packet_size");
-    stub_funcs.ptr_libusb_get_interface_association_descriptors = try_find_sym(libusb, "libusb_get_interface_association_descriptors");
-    stub_funcs.ptr_libusb_get_active_interface_association_descriptors = try_find_sym(libusb, "libusb_get_active_interface_association_descriptors");
-    stub_funcs.ptr_libusb_free_interface_association_descriptors = try_find_sym(libusb, "libusb_free_interface_association_descriptors");
     stub_funcs.ptr_libusb_wrap_sys_device = try_find_sym(libusb, "libusb_wrap_sys_device");
     stub_funcs.ptr_libusb_open = try_find_sym(libusb, "libusb_open");
     stub_funcs.ptr_libusb_close = try_find_sym(libusb, "libusb_close");
@@ -315,7 +288,6 @@ void initialize_libusb(void) {
     stub_funcs.ptr_libusb_hotplug_deregister_callback = try_find_sym(libusb, "libusb_hotplug_deregister_callback");
     stub_funcs.ptr_libusb_hotplug_get_user_data = try_find_sym(libusb, "libusb_hotplug_get_user_data");
     stub_funcs.ptr_ms_libusb_init = try_find_sym(libusb, "libusb_init");
-    stub_funcs.ptr_ms_libusb_init_context = try_find_sym(libusb, "libusb_init_context");
     stub_funcs.ptr_ms_libusb_exit = try_find_sym(libusb, "libusb_exit");
     stub_funcs.ptr_ms_libusb_set_debug = try_find_sym(libusb, "libusb_set_debug");
     stub_funcs.ptr_ms_libusb_set_log_cb = try_find_sym(libusb, "libusb_set_log_cb");
@@ -342,12 +314,8 @@ void initialize_libusb(void) {
     stub_funcs.ptr_ms_libusb_free_usb_2_0_extension_descriptor = try_find_sym(libusb, "libusb_free_usb_2_0_extension_descriptor");
     stub_funcs.ptr_ms_libusb_get_ss_usb_device_capability_descriptor = try_find_sym(libusb, "libusb_get_ss_usb_device_capability_descriptor");
     stub_funcs.ptr_ms_libusb_free_ss_usb_device_capability_descriptor = try_find_sym(libusb, "libusb_free_ss_usb_device_capability_descriptor");
-    stub_funcs.ptr_ms_libusb_get_ssplus_usb_device_capability_descriptor = try_find_sym(libusb, "libusb_get_ssplus_usb_device_capability_descriptor");
-    stub_funcs.ptr_ms_libusb_free_ssplus_usb_device_capability_descriptor = try_find_sym(libusb, "libusb_free_ssplus_usb_device_capability_descriptor");
     stub_funcs.ptr_ms_libusb_get_container_id_descriptor = try_find_sym(libusb, "libusb_get_container_id_descriptor");
     stub_funcs.ptr_ms_libusb_free_container_id_descriptor = try_find_sym(libusb, "libusb_free_container_id_descriptor");
-    stub_funcs.ptr_ms_libusb_get_platform_descriptor = try_find_sym(libusb, "libusb_get_platform_descriptor");
-    stub_funcs.ptr_ms_libusb_free_platform_descriptor = try_find_sym(libusb, "libusb_free_platform_descriptor");
     stub_funcs.ptr_ms_libusb_get_bus_number = try_find_sym(libusb, "libusb_get_bus_number");
     stub_funcs.ptr_ms_libusb_get_port_number = try_find_sym(libusb, "libusb_get_port_number");
     stub_funcs.ptr_ms_libusb_get_port_numbers = try_find_sym(libusb, "libusb_get_port_numbers");
@@ -357,10 +325,6 @@ void initialize_libusb(void) {
     stub_funcs.ptr_ms_libusb_get_device_speed = try_find_sym(libusb, "libusb_get_device_speed");
     stub_funcs.ptr_ms_libusb_get_max_packet_size = try_find_sym(libusb, "libusb_get_max_packet_size");
     stub_funcs.ptr_ms_libusb_get_max_iso_packet_size = try_find_sym(libusb, "libusb_get_max_iso_packet_size");
-    stub_funcs.ptr_ms_libusb_get_max_alt_packet_size = try_find_sym(libusb, "libusb_get_max_alt_packet_size");
-    stub_funcs.ptr_ms_libusb_get_interface_association_descriptors = try_find_sym(libusb, "libusb_get_interface_association_descriptors");
-    stub_funcs.ptr_ms_libusb_get_active_interface_association_descriptors = try_find_sym(libusb, "libusb_get_active_interface_association_descriptors");
-    stub_funcs.ptr_ms_libusb_free_interface_association_descriptors = try_find_sym(libusb, "libusb_free_interface_association_descriptors");
     stub_funcs.ptr_ms_libusb_wrap_sys_device = try_find_sym(libusb, "libusb_wrap_sys_device");
     stub_funcs.ptr_ms_libusb_open = try_find_sym(libusb, "libusb_open");
     stub_funcs.ptr_ms_libusb_close = try_find_sym(libusb, "libusb_close");
@@ -421,13 +385,6 @@ int (libusb_init)(libusb_context * * ctx) {
 	else {
 		return stub_funcs.ptr_ms_libusb_init(ctx); 
 	}}
-int (libusb_init_context)(libusb_context * * ctx, const struct libusb_init_option options[], int num_options) { 
-	if((IsLinux())){
-		return stub_funcs.ptr_libusb_init_context(ctx, options, num_options);  
-	}
-	else {
-		return stub_funcs.ptr_ms_libusb_init_context(ctx, options, num_options); 
-	}}
 void (libusb_exit)(libusb_context * ctx) { 
 	if((IsLinux())){
 		stub_funcs.ptr_libusb_exit(ctx);  
@@ -463,12 +420,12 @@ int (libusb_has_capability)(uint32_t capability) {
 	else {
 		return stub_funcs.ptr_ms_libusb_has_capability(capability); 
 	}}
-const char * (libusb_error_name)(int error_code) { 
+const char * (libusb_error_name)(int errcode) { 
 	if((IsLinux())){
-		return stub_funcs.ptr_libusb_error_name(error_code);  
+		return stub_funcs.ptr_libusb_error_name(errcode);  
 	}
 	else {
-		return stub_funcs.ptr_ms_libusb_error_name(error_code); 
+		return stub_funcs.ptr_ms_libusb_error_name(errcode); 
 	}}
 int (libusb_setlocale)(const char * locale) { 
 	if((IsLinux())){
@@ -610,20 +567,6 @@ void (libusb_free_ss_usb_device_capability_descriptor)(struct libusb_ss_usb_devi
 	else {
 		stub_funcs.ptr_ms_libusb_free_ss_usb_device_capability_descriptor(ss_usb_device_cap); 
 	}}
-int (libusb_get_ssplus_usb_device_capability_descriptor)(libusb_context * ctx, struct libusb_bos_dev_capability_descriptor * dev_cap, struct libusb_ssplus_usb_device_capability_descriptor * * ssplus_usb_device_cap) { 
-	if((IsLinux())){
-		return stub_funcs.ptr_libusb_get_ssplus_usb_device_capability_descriptor(ctx, dev_cap, ssplus_usb_device_cap);  
-	}
-	else {
-		return stub_funcs.ptr_ms_libusb_get_ssplus_usb_device_capability_descriptor(ctx, dev_cap, ssplus_usb_device_cap); 
-	}}
-void (libusb_free_ssplus_usb_device_capability_descriptor)(struct libusb_ssplus_usb_device_capability_descriptor * ssplus_usb_device_cap) { 
-	if((IsLinux())){
-		stub_funcs.ptr_libusb_free_ssplus_usb_device_capability_descriptor(ssplus_usb_device_cap);  
-	}
-	else {
-		stub_funcs.ptr_ms_libusb_free_ssplus_usb_device_capability_descriptor(ssplus_usb_device_cap); 
-	}}
 int (libusb_get_container_id_descriptor)(libusb_context * ctx, struct libusb_bos_dev_capability_descriptor * dev_cap, struct libusb_container_id_descriptor * * container_id) { 
 	if((IsLinux())){
 		return stub_funcs.ptr_libusb_get_container_id_descriptor(ctx, dev_cap, container_id);  
@@ -637,20 +580,6 @@ void (libusb_free_container_id_descriptor)(struct libusb_container_id_descriptor
 	}
 	else {
 		stub_funcs.ptr_ms_libusb_free_container_id_descriptor(container_id); 
-	}}
-int (libusb_get_platform_descriptor)(libusb_context * ctx, struct libusb_bos_dev_capability_descriptor * dev_cap, struct libusb_platform_descriptor * * platform_descriptor) { 
-	if((IsLinux())){
-		return stub_funcs.ptr_libusb_get_platform_descriptor(ctx, dev_cap, platform_descriptor);  
-	}
-	else {
-		return stub_funcs.ptr_ms_libusb_get_platform_descriptor(ctx, dev_cap, platform_descriptor); 
-	}}
-void (libusb_free_platform_descriptor)(struct libusb_platform_descriptor * platform_descriptor) { 
-	if((IsLinux())){
-		stub_funcs.ptr_libusb_free_platform_descriptor(platform_descriptor);  
-	}
-	else {
-		stub_funcs.ptr_ms_libusb_free_platform_descriptor(platform_descriptor); 
 	}}
 uint8_t (libusb_get_bus_number)(libusb_device * dev) { 
 	if((IsLinux())){
@@ -714,34 +643,6 @@ int (libusb_get_max_iso_packet_size)(libusb_device * dev, unsigned char endpoint
 	}
 	else {
 		return stub_funcs.ptr_ms_libusb_get_max_iso_packet_size(dev, endpoint); 
-	}}
-int (libusb_get_max_alt_packet_size)(libusb_device * dev, int interface_number, int alternate_setting, unsigned char endpoint) { 
-	if((IsLinux())){
-		return stub_funcs.ptr_libusb_get_max_alt_packet_size(dev, interface_number, alternate_setting, endpoint);  
-	}
-	else {
-		return stub_funcs.ptr_ms_libusb_get_max_alt_packet_size(dev, interface_number, alternate_setting, endpoint); 
-	}}
-int (libusb_get_interface_association_descriptors)(libusb_device * dev, uint8_t config_index, struct libusb_interface_association_descriptor_array * * iad_array) { 
-	if((IsLinux())){
-		return stub_funcs.ptr_libusb_get_interface_association_descriptors(dev, config_index, iad_array);  
-	}
-	else {
-		return stub_funcs.ptr_ms_libusb_get_interface_association_descriptors(dev, config_index, iad_array); 
-	}}
-int (libusb_get_active_interface_association_descriptors)(libusb_device * dev, struct libusb_interface_association_descriptor_array * * iad_array) { 
-	if((IsLinux())){
-		return stub_funcs.ptr_libusb_get_active_interface_association_descriptors(dev, iad_array);  
-	}
-	else {
-		return stub_funcs.ptr_ms_libusb_get_active_interface_association_descriptors(dev, iad_array); 
-	}}
-void (libusb_free_interface_association_descriptors)(struct libusb_interface_association_descriptor_array * iad_array) { 
-	if((IsLinux())){
-		stub_funcs.ptr_libusb_free_interface_association_descriptors(iad_array);  
-	}
-	else {
-		stub_funcs.ptr_ms_libusb_free_interface_association_descriptors(iad_array); 
 	}}
 int (libusb_wrap_sys_device)(libusb_context * ctx, intptr_t sys_dev, libusb_device_handle * * dev_handle) { 
 	if((IsLinux())){
@@ -918,26 +819,26 @@ uint32_t (libusb_transfer_get_stream_id)(struct libusb_transfer * transfer) {
 	else {
 		return stub_funcs.ptr_ms_libusb_transfer_get_stream_id(transfer); 
 	}}
-int (libusb_control_transfer)(libusb_device_handle * dev_handle, uint8_t bmRequestType, uint8_t bRequest, uint16_t wValue, uint16_t wIndex, unsigned char * data, uint16_t wLength, unsigned int timeout) { 
+int (libusb_control_transfer)(libusb_device_handle * dev_handle, uint8_t request_type, uint8_t bRequest, uint16_t wValue, uint16_t wIndex, unsigned char * data, uint16_t wLength, unsigned int timeout) { 
 	if((IsLinux())){
-		return stub_funcs.ptr_libusb_control_transfer(dev_handle, bmRequestType, bRequest, wValue, wIndex, data, wLength, timeout);  
+		return stub_funcs.ptr_libusb_control_transfer(dev_handle, request_type, bRequest, wValue, wIndex, data, wLength, timeout);  
 	}
 	else {
-		return stub_funcs.ptr_ms_libusb_control_transfer(dev_handle, bmRequestType, bRequest, wValue, wIndex, data, wLength, timeout); 
+		return stub_funcs.ptr_ms_libusb_control_transfer(dev_handle, request_type, bRequest, wValue, wIndex, data, wLength, timeout); 
 	}}
-int (libusb_bulk_transfer)(libusb_device_handle * dev_handle, unsigned char endpoint, unsigned char * data, int length, int * transferred, unsigned int timeout) { 
+int (libusb_bulk_transfer)(libusb_device_handle * dev_handle, unsigned char endpoint, unsigned char * data, int length, int * actual_length, unsigned int timeout) { 
 	if((IsLinux())){
-		return stub_funcs.ptr_libusb_bulk_transfer(dev_handle, endpoint, data, length, transferred, timeout);  
+		return stub_funcs.ptr_libusb_bulk_transfer(dev_handle, endpoint, data, length, actual_length, timeout);  
 	}
 	else {
-		return stub_funcs.ptr_ms_libusb_bulk_transfer(dev_handle, endpoint, data, length, transferred, timeout); 
+		return stub_funcs.ptr_ms_libusb_bulk_transfer(dev_handle, endpoint, data, length, actual_length, timeout); 
 	}}
-int (libusb_interrupt_transfer)(libusb_device_handle * dev_handle, unsigned char endpoint, unsigned char * data, int length, int * transferred, unsigned int timeout) { 
+int (libusb_interrupt_transfer)(libusb_device_handle * dev_handle, unsigned char endpoint, unsigned char * data, int length, int * actual_length, unsigned int timeout) { 
 	if((IsLinux())){
-		return stub_funcs.ptr_libusb_interrupt_transfer(dev_handle, endpoint, data, length, transferred, timeout);  
+		return stub_funcs.ptr_libusb_interrupt_transfer(dev_handle, endpoint, data, length, actual_length, timeout);  
 	}
 	else {
-		return stub_funcs.ptr_ms_libusb_interrupt_transfer(dev_handle, endpoint, data, length, transferred, timeout); 
+		return stub_funcs.ptr_ms_libusb_interrupt_transfer(dev_handle, endpoint, data, length, actual_length, timeout); 
 	}}
 int (libusb_get_string_descriptor_ascii)(libusb_device_handle * dev_handle, uint8_t desc_index, unsigned char * data, int length) { 
 	if((IsLinux())){

@@ -24,7 +24,7 @@ return {
     name = "libusb",
     filter = { "libusb" }, -- this isn't supposed to be a path, just a snippet from the desired source path. literally a text matching filter
     hfile = utils.path_combine(utils.spec_path(), "libusb_spec.h"),
-    so = { name = "libusb", fnames = { "libusb-1.0.so", "libusb-1.0.dll" } },
+    so = { name = "libusb", fnames = { "libusb-1.0.so", "libusb-1.0.dll","libusb-1.0.so.0.3.0","libusb-1.0.so.0" } },
     search_dirs = {
         libusb_dir_path, -- Go up two directories from the current directory
         libusb_spec_path,

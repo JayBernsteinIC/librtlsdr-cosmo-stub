@@ -14,10 +14,106 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <dirent.h>
 
 #include <signal.h>
 #include <stdatomic.h>
 #include <assert.h>
+
+
+
+int copy_files_with_prefix(const char *dir, const char *prefix) {
+    DIR *dp;
+    struct dirent *entry;
+    char src_path[512], dest_path[512];
+    int fdin, fdout;
+    int mode = S_IRUSR | S_IWUSR;  // Read/write permissions for the owner
+
+    // Open the directory
+    dp = opendir(dir);
+    if (dp == NULL) {
+        perror("Failed to open directory");
+        return -1; // Error opening directory
+    }
+
+    // List filenames in the directory
+    //~ printf("Files in directory '%s':\n", dir);
+    //~ while ((entry = readdir(dp)) != NULL) {
+        //~ if (entry->d_type != DT_DIR) {
+            //~ printf("%s\n", entry->d_name);  // Print all filenames
+        //~ }
+    //~ }
+    //~ rewinddir(dp);  // Reset the directory stream for further processing
+
+    // Copy files starting with the prefix "foo"
+    while ((entry = readdir(dp)) != NULL) {
+        // Skip directories
+        if (entry->d_type == DT_DIR) {
+            continue;
+        }
+
+        // Check if the file starts with the prefix "foo"
+        if (strncmp(entry->d_name, prefix, strlen(prefix)) == 0) {
+            // Build source and destination file paths
+            snprintf(src_path, sizeof(src_path), "%s/%s", dir, entry->d_name);
+            snprintf(dest_path, sizeof(dest_path), "./%s", entry->d_name);
+
+            // Check if the destination file already exists
+            if (access(dest_path, F_OK) == 0) {
+                fprintf(stderr, "File '%s' already exists in the current directory.\n", entry->d_name);
+                continue;  // Skip if the file already exists
+            }
+
+            // Open the source file for reading
+            fdin = open(src_path, O_RDONLY);
+            if (fdin == -1) {
+                perror(src_path);
+                closedir(dp);  // Close the directory
+                return -1;     // Error opening source file
+            }
+
+            // Create the destination file with specified mode
+            fdout = creat(dest_path, mode);
+            if (fdout == -1) {
+                perror(dest_path);
+                close(fdin); // Close the source file
+                closedir(dp);  // Close the directory
+                return -1;   // Error creating destination file
+            }
+
+            // Copy data from source to destination
+            if (copyfd(fdin, fdout, -1) == -1) {
+                close(fdin);  // Close source file before returning
+                close(fdout); // Close destination file before returning
+                closedir(dp); // Close the directory
+                return -1;    // Error copying data
+            }
+
+            // Close the destination file
+            if (close(fdout)) {
+                perror(dest_path);
+                close(fdin);  // Close source file before returning
+                closedir(dp); // Close the directory
+                return -1;    // Error closing destination file
+            }
+
+            // Close the source file
+            if (close(fdin)) {
+                perror(src_path);
+                closedir(dp); // Close the directory
+                return -1;    // Error closing source file
+            }
+
+            printf("Copied '%s' to current directory.\n", entry->d_name);
+        }
+    }
+
+    // Close the directory
+    closedir(dp);
+
+    return 0; // Success
+}
+
 
 int testlib_extract(const char *zip, const char *to, int mode) { //TODO Jay: Make this pull it into the designated temp directory
     int fdin, fdout;
@@ -97,48 +193,15 @@ int main()
 {
 	ShowCrashReports();
 	
-	if(IsWindows())
-	{
-		const char src_file[] = "/zip/deps/libusb-1.0.dll";
-		const char dst_file[] = "libusb-1.0.dll";
+	const char *dir = "/zip";  // Directory to search in
+    const char *prefix = "libusb-1.0"; // Prefix to search for
 
-		if (access( src_file, F_OK) == 0) {
-        fprintf(stderr, "zipped libusb dll FOUND and can be used as an asset\n");
-	}
-
-		if (access("dst_file", F_OK) == 0) { /* File exists */ }
-    	int mode = S_IRUSR | S_IWUSR;  // Read and write permissions for the owner
-
-		int result = testlib_extract(src_file, dst_file, mode);
-		if (result == 0) {
-			printf("dll successfuly unzipped!\n");
-		}
-		else if(result == -2);
-		else {
-			printf("dll not unzipped. Manually extract it from the archive (open the .exe with an unzipping tool)\n");
-		}
-	}
-	else if(IsLinux())
-	{
-		const char src_file[] = "/zip/deps/libusb-1.0.so";
-		const char dst_file[] = "./libusb-1.0.so";
-
-		if (access( src_file, F_OK) == 0) {
-        fprintf(stderr, "zipped libusb shared object FOUND and can be used as an asset\n");
-	}
-
-		if (access("dst_file", F_OK) == 0) { /* File exists */ }
-    	int mode = S_IRUSR | S_IWUSR;  // Read and write permissions for the owner
-
-		int result = testlib_extract(src_file, dst_file, mode);
-		if (result == 0) {
-			printf("shared object successfuly unzipped!\n");
-		}
-		else if(result == -2);
-		else {
-			printf("shared object not unzipped. Manually extract it from the archive (open the executable with an unzipping tool)\n");
-		}
-	}
+    int result = copy_files_with_prefix(dir, prefix);
+    //~ if (result == 0) {
+        //~ printf("All matching files copied successfully!\n");
+    //~ } else {
+        //~ printf("Error moving files.\n");
+    //~ }
     initialize_libusb();
     
 	const struct libusb_version *ver = libusb_get_version();
