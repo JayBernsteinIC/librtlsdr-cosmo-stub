@@ -15,6 +15,8 @@ read -p "Do you want to rebuild libusb? (y/n): " response; if [ "$response" = "y
 	#~ mkdir ../linux_build/objects || true
 	#~ mkdir ../linux_build/examples || true
 	cp -r build/* ../linux_build
+	rm ../libusb-*.so #delete existing so in /deps
+	cp ../linux_build/lib/*.so .. #copy new so into /deps
 
 
 	mkdir build-win -p
@@ -29,7 +31,8 @@ read -p "Do you want to rebuild libusb? (y/n): " response; if [ "$response" = "y
 	#~ mkdir ../win_build/examples || true
 	cp -r build-win/* ../win_build
 	#~ cp examples/.libs/* ../win_build/examples
-	#~ cp ../win_build/objects/*.dll ..
+	rm ../libusb-*.dll #delete existing dlls in /deps
+	cp ../win_build/bin/*.dll .. #copy new dll into /deps
 
 	echo "done"
 	cp libusb/libusb.h ..
