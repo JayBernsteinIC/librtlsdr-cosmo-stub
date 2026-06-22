@@ -10,9 +10,9 @@ if (CLANG_INCLUDE_DIR)
   include_directories(${CLANG_INCLUDE_DIR})
 endif()
 find_package(Lua REQUIRED)
-find_library(CLANG_LIBRARY NAMES clang libclang
+find_library(CLANG_LIBRARY NAMES clang-20 libclang-20
              HINTS /usr/lib /usr/lib/llvm-20/lib /usr/local/lib)
-find_library(CLANG_CPP_LIBRARY NAMES clang-cpp libclang-cpp
+find_library(CLANG_CPP_LIBRARY NAMES clang-cpp-20 libclang-cpp-20 libclang-cpp.so.20.1
              HINTS /usr/lib /usr/lib/llvm-20/lib /usr/local/lib)
              
 
